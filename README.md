@@ -29,6 +29,20 @@ Anything else returns `"unknown"` rather than guessing or crashing.
 
 The tool is built as four independent pieces, each answering exactly one question:
 
+```
+User runs: zero-ops-deploy --path . --docker-username X --image-name Y
+        ↓
+   cli.py (orchestrator)
+        ↓
+   detector.py → detect_stack(path) → returns "flask" / "express" / "python-script" / "static" / "unknown"
+        ↓
+   generators/dockerfile.py    → generate_dockerfile(stack)                → Dockerfile text
+   generators/workflow.py      → generate_workflow(user, image)            → GitHub Actions YAML text
+   generators/deploy_script.py → generate_deploy_script(user, image, port) → bash script text
+        ↓
+   cli.py writes all three outputs to real files in the target repo
+```
+
 **Why it's structured this way:** each generator is a pure function — same input always produces the same output, and none of them touch the filesystem directly. `detector.py` only inspects, never writes. `cli.py` is the only file that has side effects (writing files, printing output) — everything risky is isolated in one place, and everything else is trivially testable in a Python shell with a single `print()` call.
 
 ## How each piece was validated
