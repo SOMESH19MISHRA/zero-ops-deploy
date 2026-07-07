@@ -57,6 +57,7 @@ User runs: zero-ops-deploy --path . --docker-username X --image-name Y
 - `python-script` stack assumes the entry file is named `app.py`
 - No detection of the actual port an app listens on — deploy script defaults to a fixed port, which may not match apps that read `PORT` from an environment variable
 - Doesn't check for an existing `.github/workflows/` before writing — will overwrite an existing pipeline
+- `deploy.sh` assumes an EC2 instance already exists and is meant to be run **on** that instance (e.g. via SSH) — it installs Docker and runs the container, but does not provision the EC2 instance itself, configure security groups, or touch AWS in any way
 - Static sites don't get a CI/CD workflow or deploy script tailored differently from other stacks (out of scope for v1)
 
 ## Install (local, from source)
